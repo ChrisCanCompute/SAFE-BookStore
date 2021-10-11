@@ -4,10 +4,7 @@ open Npgsql
 open ServerCode.Domain
 open System.Data.Common
 
-module PostgresTable = 
-    let make (connectionString : string) : PostgresConfiguration =
-        { Connection = connectionString }
-
+module PostgresTable =
     let rec private readBooks (reader : DbDataReader) acc =
         async {
             let! canRead = reader.ReadAsync() |> Async.AwaitTask
