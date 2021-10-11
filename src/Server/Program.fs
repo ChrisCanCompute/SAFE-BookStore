@@ -8,6 +8,7 @@ open Saturn.Application
 open Microsoft.Extensions.DependencyInjection
 open Thoth.Json.Giraffe
 open ServerCode.Database
+open ServerCode.Storage.Postgres
 
 let GetEnvVar var =
     match Environment.GetEnvironmentVariable(var) with
@@ -44,6 +45,7 @@ let azureDatabase connectionString =
     |> DatabaseType.AzureStorage
 
 let postgresDatabase configuration =
+    Migrator.migrate configuration |> Async.RunSynchronously
     configuration |> DatabaseType.Postgres
 
 let fileBackedDatabase () =

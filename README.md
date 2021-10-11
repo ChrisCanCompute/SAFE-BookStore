@@ -52,9 +52,12 @@ The site will now be failing as it connects to the database, which has no tables
 
 1. Run paket to install the new `Simple.Migrations` dependency  
 ```.\.paket\paket install```
+1. Redploy the app to run the migrations  
+```.\build.cmd BundleClient; docker build -t book-store .; kubectl rollout restart deployment/book-store```  
+
+The [site](http://localhost:8085/) now loads, backed by a Postgres database.
 
 # Next steps
 
-1. [Part3](https://github.com/ChrisCanCompute/SAFE-BookStore/blob/Part3/README.md#part3---add-postgres-migrations) - Add Postgres migrations
 1. [Part4](https://github.com/ChrisCanCompute/SAFE-BookStore/blob/Part4/README.md#part4---create-a-cleaning-app) - Create a cleaning app
 1. [Part5](https://github.com/ChrisCanCompute/SAFE-BookStore/blob/Part5/README.md#part5---create-a-kubernetes-cron-job-to-run-the-cleaner) - Create a kubernetes cron job to run the cleaner

@@ -16,6 +16,8 @@
     <Compile Include="Storage/FileSystem.fs" />
     <Compile Include="Storage/AzureTable.fs" />
     <Compile Include="Storage/Postgres/Configuration.fs" />
+    <Compile Include="Storage/Postgres/Migrations.fs" />
+    <Compile Include="Storage/Postgres/Migrator.fs" />
     <Compile Include="Storage/Postgres/PostgresTable.fs" />
     <Compile Include="Database.fs" />
     <Compile Include="../Client/ReleaseNotes.fs" />
