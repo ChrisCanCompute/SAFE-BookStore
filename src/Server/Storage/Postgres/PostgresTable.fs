@@ -4,14 +4,11 @@ open Npgsql
 open ServerCode.Domain
 open System.Data.Common
 
-module PostgresTable = 
-    let make (connectionString : string) : PostgresConfiguration =
-        { Connection = connectionString }
-
+module PostgresTable =
     let rec private readBooks (reader : DbDataReader) acc =
         async {
             let! canRead = reader.ReadAsync() |> Async.AwaitTask
-            if canRead then
+            if not canRead then
                 return acc
             else
                 let newBook = {
@@ -24,11 +21,11 @@ module PostgresTable =
         }
 
     let getWishListFromDB table (userName : string) =
-        let sql = "SELECT title, authors, image_link, link FROM wish_list WHERE user = @user"
+        let sql = "SELECT title, authors, image_link, link FROM wish_list WHERE username = @username"
         async {
             use! connection = PostgresConfiguration.openConnection table
             use cmd = new NpgsqlCommand(sql, connection)
-            cmd.Parameters.AddWithValue("user", userName) |> ignore
+            cmd.Parameters.AddWithValue("username", userName) |> ignore
             let! reader = cmd.ExecuteReaderAsync() |> Async.AwaitTask
             let! books = readBooks reader []
             return { Books = books; UserName = userName }
@@ -42,13 +39,13 @@ module PostgresTable =
                 authors,
                 image_link,
                 link,
-                user
+                username
             ) VALUES (
                 @title,
                 @authors,
                 @image_link,
                 @link,
-                @user
+                @username
             )"
         async {
             use! connection = PostgresConfiguration.openConnection config
@@ -57,7 +54,7 @@ module PostgresTable =
             cmd.Parameters.AddWithValue("authors", book.Authors) |> ignore
             cmd.Parameters.AddWithValue("image_link", book.ImageLink) |> ignore
             cmd.Parameters.AddWithValue("link", book.Link) |> ignore
-            cmd.Parameters.AddWithValue("user", user) |> ignore
+            cmd.Parameters.AddWithValue("username", user) |> ignore
             let! _ = cmd.ExecuteNonQueryAsync() |> Async.AwaitTask
             return ()
         }
@@ -69,7 +66,7 @@ module PostgresTable =
             AND authors = @authors
             AND image_link = @image_link
             AND link = @link
-            AND user = @user"
+            AND username = @username"
         async {
             use! connection = PostgresConfiguration.openConnection config
             use cmd = new NpgsqlCommand(sql, connection)
@@ -77,7 +74,7 @@ module PostgresTable =
             cmd.Parameters.AddWithValue("authors", book.Authors) |> ignore
             cmd.Parameters.AddWithValue("image_link", book.ImageLink) |> ignore
             cmd.Parameters.AddWithValue("link", book.Link) |> ignore
-            cmd.Parameters.AddWithValue("user", user) |> ignore
+            cmd.Parameters.AddWithValue("username", user) |> ignore
             let! _ = cmd.ExecuteNonQueryAsync() |> Async.AwaitTask
             return ()
         }

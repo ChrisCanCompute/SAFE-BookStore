@@ -36,7 +36,7 @@ let getDatabase databaseType startupTime =
         }
 
     | DatabaseType.Postgres connectionString ->
-        let postgresConfig = PostgresTable.make connectionString
+        let postgresConfig = PostgresConfiguration.make connectionString
         { new IDatabaseFunctions with
             member __.LoadWishList key = PostgresTable.getWishListFromDB postgresConfig key
             member __.SaveWishList wishList = PostgresTable.saveWishListToDB postgresConfig wishList
