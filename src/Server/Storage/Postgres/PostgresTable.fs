@@ -1,5 +1,6 @@
 namespace ServerCode.Storage.Postgres
 
+open System
 open Npgsql
 open ServerCode.Domain
 open System.Data.Common
@@ -39,13 +40,15 @@ module PostgresTable =
                 authors,
                 image_link,
                 link,
-                username
+                username,
+                created_at
             ) VALUES (
                 @title,
                 @authors,
                 @image_link,
                 @link,
-                @username
+                @username,
+                @created_at
             )"
         async {
             use! connection = PostgresConfiguration.openConnection config
@@ -55,6 +58,7 @@ module PostgresTable =
             cmd.Parameters.AddWithValue("image_link", book.ImageLink) |> ignore
             cmd.Parameters.AddWithValue("link", book.Link) |> ignore
             cmd.Parameters.AddWithValue("username", user) |> ignore
+            cmd.Parameters.AddWithValue("created_at", DateTime.Now) |> ignore
             let! _ = cmd.ExecuteNonQueryAsync() |> Async.AwaitTask
             return ()
         }

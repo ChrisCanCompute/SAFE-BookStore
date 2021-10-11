@@ -24,3 +24,19 @@ type ``Create wish list table``() =
         """)
 
 
+[<Migration(2L, "Add created at date")>]
+type ``Add created at date``() =
+    inherit Migration()
+
+    override this.Up () =
+        this.Execute("""
+            ALTER TABLE wish_list
+                ADD COLUMN created_at date;
+        """)
+
+    override this.Down () =
+        this.Execute("""
+            ALTER TABLE wish_list
+                DROP COLUMN created_at;
+        """)
+
