@@ -10,6 +10,7 @@ open Fake.Testing.Expecto
 
 let clientPath = FullName "./src/Client"
 let serverPath = FullName "./src/Server/"
+let cleanerPath = FullName "./src/Cleaner/"
 let serverTestsPath = FullName "./test/ServerTests"
 let clientTestsPath = FullName "./test/UITests"
 
@@ -262,6 +263,10 @@ Target "BundleClient" (fun _ ->
     !! "src/Client/Images/**/*.*" |> CopyFiles imageDir
 )
 
+Target "BuildCleaner" (fun _ ->
+    runDotnet cleanerPath "build"
+)
+
 Target "CreateDockerImage" (fun _ ->
     !! "./**/temp/db/*.json"
     |> DeleteFiles
@@ -415,6 +420,7 @@ Target "All" DoNothing
   ==> "NPMInstall"
   ==> "SetReleaseNotes"
   ==> "BuildServer"
+  ==> "BuildCleaner"
   ==> "BuildClient"
   ==> "RunServerTests"
   ==> "RunUITest"

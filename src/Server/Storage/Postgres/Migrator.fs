@@ -12,6 +12,15 @@ module Migrator =
         let migrationsAssembly = typeof<``Create wish list table``>.Assembly
         SimpleMigrator(migrationsAssembly, provider)
 
+    let isLatest (connectionString : string) =
+        let postgresConfig = PostgresConfiguration.make connectionString
+        async {
+            use! connection = PostgresConfiguration.openConnection postgresConfig
+            let migrator = make connection "public" false
+            migrator.Load()
+            return migrator.CurrentMigration.Version = migrator.LatestMigration.Version
+        }
+
     let migrate (connectionString : string) =
         let postgresConfig = PostgresConfiguration.make connectionString
         async {

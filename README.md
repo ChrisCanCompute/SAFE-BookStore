@@ -57,7 +57,11 @@ The site will now be failing as it connects to the database, which has no tables
 
 The [site](http://localhost:8085/) now loads, backed by a Postgres database.
 
+## Part4 - Create a cleaning app
+
+1. Build the cleaner app  
+```.\build.cmd BuildCleaner```
+
 # Next steps
 
-1. [Part4](https://github.com/ChrisCanCompute/SAFE-BookStore/blob/Part4/README.md#part4---create-a-cleaning-app) - Create a cleaning app
 1. [Part5](https://github.com/ChrisCanCompute/SAFE-BookStore/blob/Part5/README.md#part5---create-a-kubernetes-cron-job-to-run-the-cleaner) - Create a kubernetes cron job to run the cleaner
