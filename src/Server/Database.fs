@@ -2,14 +2,17 @@
 module ServerCode.Database
 
 open ServerCode.Storage.AzureTable
+open ServerCode.Storage.Postgres
 open ServerCode
 open System.Threading.Tasks
 open FSharp.Control.Tasks.ContextInsensitive
+open Npgsql
 
 [<RequireQualifiedAccess>]
 type DatabaseType =
     | FileSystem
     | AzureStorage of connectionString : AzureConnection
+    | Postgres of configuration : string
 
 type IDatabaseFunctions =
     abstract member LoadWishList : string -> Task<Domain.WishList>
@@ -30,6 +33,14 @@ let getDatabase databaseType startupTime =
                     resetTime
                     |> Option.defaultValue startupTime
             }
+        }
+
+    | DatabaseType.Postgres connectionString ->
+        let postgresConfig = PostgresTable.make connectionString
+        { new IDatabaseFunctions with
+            member __.LoadWishList key = PostgresTable.getWishListFromDB postgresConfig key
+            member __.SaveWishList wishList = PostgresTable.saveWishListToDB postgresConfig wishList
+            member __.GetLastResetTime () = Task.FromResult startupTime
         }
 
     | DatabaseType.FileSystem ->

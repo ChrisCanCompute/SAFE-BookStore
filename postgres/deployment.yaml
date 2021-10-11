@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-store-db
+  labels:
+    app: book-store-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-store-db
+  template:
+    metadata:
+      labels:
+        app: book-store-db
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: book-store-db
+        image: postgres:14.0-bullseye
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: POSTGRES_DB
+          value: postgresdb
+        - name: POSTGRES_USER
+          value: postgresadmin
+        - name: POSTGRES_PASSWORD
+          value: admin123
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim

@@ -7,6 +7,7 @@ open Microsoft.Extensions.Logging
 open Saturn.Application
 open Microsoft.Extensions.DependencyInjection
 open Thoth.Json.Giraffe
+open ServerCode.Database
 
 let GetEnvVar var =
     match Environment.GetEnvironmentVariable(var) with
@@ -20,6 +21,33 @@ let getPortsOrDefault defaultVal =
 
 let serviceConfig (services : IServiceCollection) =
     services.AddSingleton<Giraffe.Serialization.Json.IJsonSerializer>(ThothSerializer())
+
+let (|Azure|_|) args =
+    args
+    |> List.tryFind(fun (arg : string) ->
+        arg.StartsWith "AzureConnection=")
+    |> Option.map (fun arg ->
+        arg.Substring "AzureConnection=".Length)
+
+let (|Postgres|_|) args : string option =
+    args
+    |> List.tryFind(fun (arg : string) ->
+        arg.StartsWith "PostgresConnection=")
+    |> Option.map (fun (arg : string) ->
+        // Wants to look like
+        // Host=myserver;Username=mylogin;Password=mypass;Database=mydatabase
+        arg.Substring "PostgresConnection=".Length)
+
+let azureDatabase connectionString =
+    connectionString
+    |> Storage.AzureTable.AzureConnection
+    |> DatabaseType.AzureStorage
+
+let postgresDatabase configuration =
+    configuration |> DatabaseType.Postgres
+
+let fileBackedDatabase () =
+    DatabaseType.FileSystem
 
 [<EntryPoint>]
 let main args =
@@ -40,13 +68,13 @@ let main args =
             |> Path.GetFullPath
 
         let database =
-            args
-            |> List.tryFind(fun arg -> arg.StartsWith "AzureConnection=")
-            |> Option.map(fun arg ->
-                arg.Substring "AzureConnection=".Length
-                |> ServerCode.Storage.AzureTable.AzureConnection
-                |> Database.DatabaseType.AzureStorage)
-            |> Option.defaultValue Database.DatabaseType.FileSystem
+            match args with
+            | Azure connectionString ->
+                azureDatabase connectionString
+            | Postgres connectionString ->
+                postgresDatabase connectionString
+            | _ ->
+                fileBackedDatabase ()
 
         let port = getPortsOrDefault 8085us
 

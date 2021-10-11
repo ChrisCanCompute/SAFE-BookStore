@@ -34,7 +34,19 @@ Open http://localhost:8085/ to see it running
 ## Part2 - Add Postgres storage to the app
 
 1. Run paket to install the new `Npgsql` dependency  
-```.\.paket\paket.exe update```
+```.\.paket\paket install```
+1. Create a postgres mount  
+```kubectl apply -f .\postgres\storage.yaml```  
+1. Create a postgres deployment  
+```kubectl apply -f .\postgres\deployment.yaml```  
+1. Expose the database
+```kubectl expose deployment book-store-db --type=LoadBalancer```  
+1. Re-deploy the site  
+```./build.cmd BundleClient && docker build -t book-store . && kubectl rollout restart deployment/book-store```  
+and to check on the status:
+```kubectl rollout status deployment book-store```
+
+The site will now be failing as it connects to the database, which has no tables.
 
 # Next steps
 
