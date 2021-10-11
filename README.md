@@ -16,7 +16,7 @@ Settings > enable > restart
 ## Part0 - Creating a docker container
 
 1. Bundle the project  
-```./build.cmd BundleClient```
+```.\build.cmd BundleClient```
 1. Build the docker file  
 ```docker build -t book-store .```
 1. Deploy to docker  
@@ -42,7 +42,7 @@ Open http://localhost:8085/ to see it running
 1. Expose the database
 ```kubectl expose deployment book-store-db --type=LoadBalancer```  
 1. Re-deploy the site  
-```./build.cmd BundleClient && docker build -t book-store . && kubectl rollout restart deployment/book-store```  
+```.\build.cmd BundleClient; docker build -t book-store .; kubectl rollout restart deployment/book-store```  
 and to check on the status:
 ```kubectl rollout status deployment book-store```
 
