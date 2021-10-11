@@ -4,6 +4,7 @@ storage:none
 nuget FSharp.Core redirects: force
 nuget Npgsql
 nuget Saturn
+nuget Simple.Migrations
 nuget System.Net.NetworkInformation
 nuget Thoth.Json.Net
 nuget Thoth.Json.Giraffe

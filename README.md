@@ -48,6 +48,11 @@ and to check on the status:
 
 The site will now be failing as it connects to the database, which has no tables.
 
+## Part3 - Add Postgres migrations
+
+1. Run paket to install the new `Simple.Migrations` dependency  
+```.\.paket\paket install```
+
 # Next steps
 
 1. [Part3](https://github.com/ChrisCanCompute/SAFE-BookStore/blob/Part3/README.md#part3---add-postgres-migrations) - Add Postgres migrations

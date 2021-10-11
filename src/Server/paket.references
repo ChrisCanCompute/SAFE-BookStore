@@ -14,3 +14,4 @@ Thoth.Json.Giraffe
 Microsoft.Azure.WebJobs
 Microsoft.Azure.WebJobs.Extensions
 Npgsql
+Simple.Migrations
