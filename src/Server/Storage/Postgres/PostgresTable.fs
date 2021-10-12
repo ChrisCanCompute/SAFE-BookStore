@@ -20,10 +20,10 @@ module PostgresTable =
                 return! readBooks reader (newBook :: acc)
         }
 
-    let getWishListFromDB table (userName : string) =
+    let getWishListFromDB postgresConfiguration (userName : string) =
         let sql = "SELECT title, authors, image_link, link FROM wish_list WHERE username = @username"
         async {
-            use! connection = PostgresConfiguration.openConnection table
+            use! connection = PostgresConfiguration.openConnection postgresConfiguration
             use cmd = new NpgsqlCommand(sql, connection)
             cmd.Parameters.AddWithValue("username", userName) |> ignore
             let! reader = cmd.ExecuteReaderAsync() |> Async.AwaitTask
@@ -78,7 +78,6 @@ module PostgresTable =
             let! _ = cmd.ExecuteNonQueryAsync() |> Async.AwaitTask
             return ()
         }
-
 
     let saveWishListToDB (config : PostgresConfiguration) (wishList : WishList) =
         async {
