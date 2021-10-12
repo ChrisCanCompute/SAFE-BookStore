@@ -416,8 +416,6 @@ Target "All" DoNothing
   ==> "SetReleaseNotes"
   ==> "BuildServer"
   ==> "BuildClient"
-  ==> "RunServerTests"
-  ==> "RunUITest"
   ==> "BundleClient"
   ==> "All"
   ==> "CreateDockerImage"
