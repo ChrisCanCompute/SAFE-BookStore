@@ -18,6 +18,7 @@ let dotnetcliVersion = DotNetCli.GetDotNetSDKVersionFromGlobalJson()
 let mutable dotnetExePath = "dotnet"
 
 let deployDir = "./deploy"
+let cleanerDeployDir = "./src/Cleaner/cleanerDeploy"
 
 let dockerUser = getBuildParam "DockerUser"
 let dockerPassword = getBuildParam "DockerPassword"
@@ -267,6 +268,15 @@ Target "BuildCleaner" (fun _ ->
     runDotnet cleanerPath "build"
 )
 
+Target "BundleCleaner" (fun _ ->
+    let result =
+        ExecProcess (fun info ->
+            info.FileName <- dotnetExePath
+            info.WorkingDirectory <- cleanerPath
+            info.Arguments <- "publish -c Release -o \"" + FullName cleanerDeployDir + "\"") TimeSpan.MaxValue
+    if result <> 0 then failwith "Publish failed"
+)
+
 Target "CreateDockerImage" (fun _ ->
     !! "./**/temp/db/*.json"
     |> DeleteFiles
@@ -420,7 +430,6 @@ Target "All" DoNothing
   ==> "NPMInstall"
   ==> "SetReleaseNotes"
   ==> "BuildServer"
-  ==> "BuildCleaner"
   ==> "BuildClient"
   ==> "RunServerTests"
   ==> "RunUITest"
@@ -430,6 +439,11 @@ Target "All" DoNothing
   ==> "TestDockerImage"
   ==> "PrepareRelease"
   ==> "Deploy"
+
+"Clean"
+  ==> "BuildServer"
+  ==> "BuildCleaner"
+  ==> "BundleCleaner"
 
 "BuildClient"
   ==> "Build"

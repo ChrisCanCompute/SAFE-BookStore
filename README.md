@@ -64,6 +64,15 @@ The [site](http://localhost:8085/) now loads, backed by a Postgres database.
 1. Run the cleaner app  
 ```dotnet run --project .\src\Cleaner\Cleaner.fsproj "PostgresConnection=Host=localhost;Username=postgresadmin;Password=admin123;Database=postgresdb"```
 
-# Next steps
+# Part5 - Create a kubernetes cron job to run the cleaner
 
-1. [Part5](https://github.com/ChrisCanCompute/SAFE-BookStore/blob/Part5/README.md#part5---create-a-kubernetes-cron-job-to-run-the-cleaner) - Create a kubernetes cron job to run the cleaner
+1. Bundle the cleaner app  
+```.\build.cmd BundleCleaner```
+1. Build the cleaner image  
+```docker build -t .\src\Cleaner```
+1. Create the cron job  
+```kubectl apply -f .\src\Cleaner\cleaner.yaml```
+1. Check it exists  
+```kubectl get cronjob```
+1. Do a manual run  
+```kubectl create job --from=cronjob/book-store-cleaner clean-now```
