@@ -1,7 +1,7 @@
 # SAFE postgres migrations
 
 This fork of the [SAFE bookstore project](https://github.com/SAFE-Stack/SAFE-BookStore) shows:
-* How to ru nthe app on kuberentes
+* How to run the app on kuberentes
 * How to setup Postgres storage
 * How to run Postgres migrations
 * How to run a regular cleaning job
