@@ -20,9 +20,23 @@ module Program =
             failwith "Migrations are not up to date, will not do any cleaning!"
 
     let clean connection =
-        
-        ()
+        let earliestBook = DateTime.Now - TimeSpan.FromDays 7.0
 
+        let countSql = "SELECT COUNT(*) FROM wish_list WHERE created_at < @delete_before"
+        use countCmd = new NpgsqlCommand(countSql, connection)
+        countCmd.Parameters.AddWithValue("delete_before", earliestBook) |> ignore
+        use reader = countCmd.ExecuteReaderAsync().Result
+        reader.ReadAsync().Result |> ignore
+        let count = reader.GetInt32(0)
+        reader.Dispose()
+        countCmd.Dispose()
+        printf "Deleting %i books from the wish list ... " count
+
+        let deleteSql = "DELETE FROM wish_list WHERE created_at < @delete_before"
+        use deleteCmd = new NpgsqlCommand(deleteSql, connection)
+        deleteCmd.Parameters.AddWithValue("delete_before", earliestBook) |> ignore
+        deleteCmd.ExecuteNonQueryAsync().Result |> ignore
+        printfn "Deleted"
 
     [<EntryPoint>]
     let main args =
@@ -31,7 +45,7 @@ module Program =
             let connectionString =
                 match args with
                 | Postgres connectionString -> connectionString
-                | _ -> failwithf "Could not find postgres connection string in args: %A" args
+                | _ -> failwithf "Could not find postgres connection string in args: '%s'" (args |> String.concat " ")
             
             assertLatestMigrations connectionString
             let connection = connectionString |> PostgresConfiguration.make |> PostgresConfiguration.openConnection |> Async.RunSynchronously
@@ -39,7 +53,9 @@ module Program =
 
             clean connection
 
+            printf "Committing transaction ... "
             transaction.Commit ()
+            printfn "Committed"
 
             0
         with

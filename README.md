@@ -61,6 +61,8 @@ The [site](http://localhost:8085/) now loads, backed by a Postgres database.
 
 1. Build the cleaner app  
 ```.\build.cmd BuildCleaner```
+1. Run the cleaner app  
+```dotnet run --project .\src\Cleaner\Cleaner.fsproj "PostgresConnection=Host=localhost;Username=postgresadmin;Password=admin123;Database=postgresdb"```
 
 # Next steps
 
