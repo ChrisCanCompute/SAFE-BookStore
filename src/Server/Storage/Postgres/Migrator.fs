@@ -27,6 +27,10 @@ module Migrator =
             use! connection = PostgresConfiguration.openConnection postgresConfig
             let migrator = make connection "public" false
             migrator.Load()
-            if migrator.CurrentMigration.Version < migrator.LatestMigration.Version then
+            let currentMigration = migrator.CurrentMigration.Version
+            let latestMigration = migrator.LatestMigration.Version
+            if currentMigration < latestMigration then
+                printfn "Migrating Database from version %i to version %i" currentMigration latestMigration
                 migrator.MigrateToLatest()
+                printfn "Finished migrations"
         }

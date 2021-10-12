@@ -422,8 +422,6 @@ Target "All" DoNothing
   ==> "BuildServer"
   ==> "BuildCleaner"
   ==> "BuildClient"
-  ==> "RunServerTests"
-  ==> "RunUITest"
   ==> "BundleClient"
   ==> "All"
   ==> "CreateDockerImage"
