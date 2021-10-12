@@ -193,4 +193,5 @@ docs/tools/FSharp.Formatting.svclog
 node_modules
 src/Client/public/
 deploy
+src/Cleaner/cleanerDeploy
 /.ionide
