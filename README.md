@@ -64,7 +64,7 @@ The [site](http://localhost:8085/) now loads, backed by a Postgres database.
 1. Run the cleaner app  
 ```dotnet run --project .\src\Cleaner\Cleaner.fsproj "PostgresConnection=Host=localhost;Username=postgresadmin;Password=admin123;Database=postgresdb"```
 
-# Part5 - Create a kubernetes cron job to run the cleaner
+## Part5 - Create a kubernetes cron job to run the cleaner
 
 1. Bundle the cleaner app  
 ```.\build.cmd BundleCleaner```
